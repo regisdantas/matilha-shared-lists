@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { shade } from 'polished';
-import {UserAuth} from '../contexts/authContext';
+import {useAuth} from '../context/AuthContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
@@ -13,7 +13,7 @@ import { Header } from "../components/Header"
 type LoginScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
 export const LoginScreen = () => {
-  const {user, signInWithGoogle, signInWithFacebook} = UserAuth();
+  const {user, signInWithGoogle, signInWithFacebook} = useAuth();
   const navigation = useNavigation<LoginScreenNavigationProp>();
 
   const handleLoginEmail = () => {}
@@ -23,7 +23,6 @@ export const LoginScreen = () => {
       await signInWithGoogle();
     } catch (error)  {
       console.log(error);
-      // setInputStatus({type: "error", fields: "email", message: (error instanceof Error)?error.message:"Unknown error"});
     }
   }
 
@@ -32,13 +31,11 @@ export const LoginScreen = () => {
       await signInWithFacebook();
     } catch (error)  {
       console.log(error);
-      // setInputStatus({type: "error", fields: "email", message: (error instanceof Error)?error.message:"Unknown error"});
     }
   }
 
   React.useEffect(() => {
     if (user !== null && user.displayName !== undefined) {
-      console.log(user)
       navigation.navigate('Dashboard' as never);
     }
   }, [user]);
@@ -49,7 +46,6 @@ export const LoginScreen = () => {
       <LoginForm>
         <Input placeholder="Email" placeholderTextColor="#aaa" keyboardType="email-address" />
         <Input placeholder="Senha" placeholderTextColor="#aaa" secureTextEntry />
-
         <LoginButton color={"#04d361"} onPress={handleGoogleSignIn}>
           <MaterialIcons name="email" size={24} color="white" />
           <LoginText>Entrar com E-mail</LoginText>
@@ -62,7 +58,6 @@ export const LoginScreen = () => {
           <FontAwesome5 name="facebook" size={24} color="white" />
           <LoginText>Entre com Facebook</LoginText>
         </LoginButton>
-
       </LoginForm>
       <Matilha source={require('../assets/matilha.png')}/>
       <BotBar/>
@@ -70,7 +65,6 @@ export const LoginScreen = () => {
   );
 };
 
-// Styled Components
 const LoginForm = styled.View`
   margin-top: 100px;
 `
@@ -118,7 +112,6 @@ const LoginButton = styled.TouchableOpacity<CustomButtonProps>`
   border-radius: 5px;
   padding: 10px;
   height: 50px;
-
   ${props =>
     props.color &&
     css`
@@ -127,7 +120,6 @@ const LoginButton = styled.TouchableOpacity<CustomButtonProps>`
         background-color: ${shade(0.2, props.color)} !important;
       }
     `}
-
 `;
 
 const BodyContainer = styled.View`

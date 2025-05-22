@@ -2,31 +2,30 @@
   "expo": {
     "name": "matilha",
     "slug": "matilha",
-    "entryPoint": "./App.tsx",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./src/assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/matilha.png",
+      "image": "./src/assets/matilha.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true,
-      "jsEngine": "jsc"
+      "jsEngine": "jsc", 
+      "supportsTablet": true
     },
     "android": {
+      "jsEngine": "jsc", 
       "adaptiveIcon": {
-        "foregroundImage": "./assets/matilha.png",
-        "backgroundColor": "#ffffff",
-        "jsEngine": "jsc"
+        "foregroundImage": "./src/assets/matilha.png",
+        "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./src/assets/favicon.png"
     },
     "plugins": [
       "expo-web-browser",

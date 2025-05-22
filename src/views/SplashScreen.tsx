@@ -2,10 +2,10 @@ import React, { useEffect } from 'react';
 import { Animated } from 'react-native';
 import styled from 'styled-components/native';
 import { useNavigation } from '@react-navigation/native';
-import {UserAuth} from '../contexts/authContext';
+import {useAuth} from '../context/AuthContext';
 
 export const SplashScreen = () => {
-  const {user} = UserAuth();
+  const {user} = useAuth();
   const opacity = new Animated.Value(0);
   const navigation = useNavigation();
 
@@ -30,7 +30,7 @@ export const SplashScreen = () => {
   return (
     <Container>
       <AnimatedLogo style={{ opacity }}>
-        <Logo>🐾</Logo>
+        <Wolf source={require('../assets/wolf.png')}/>
         <Title>Matilha</Title>
       </AnimatedLogo>
     </Container>
@@ -49,13 +49,21 @@ const AnimatedLogo = styled(Animated.View)`
   align-items: center;
 `;
 
-const Logo = styled.Text`
-  font-size: 64px;
-`;
-
 const Title = styled.Text`
   font-size: 32px;
   font-weight: bold;
   color: #333;
   margin-top: 12px;
 `;
+
+const Wolf = styled.Image`
+  position: absolute;
+  flex: 1;
+  top: 30px;
+  left: calc(50% - 150px);
+  z-index: 1;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  opacity: 20%;
+`
