@@ -20,6 +20,21 @@ export const DashboardScreen = () => {
       })
     return lists;
   }
+
+  const addList = () => {
+    dispatchAction(
+      { type: 'ADD_LIST', payload: { familyHandle: userData.selectedFamily, list: {
+        handle: "",
+        icon: "",
+        name: "Click to edit",
+        favorite: false,
+        familyHandle: userData.selectedFamily,
+        items: [],
+        ownerHandle: userData.handle,
+      } } }
+    )
+  }
+
   return (
     <BodyContainer>
       <Header />
@@ -33,6 +48,9 @@ export const DashboardScreen = () => {
       </ListScroll>
       <Matilha source={require('../assets/matilha.png')} />
       <BotBar />
+      <AddListButton onPress={addList}>
+        <ButtonText>➕</ButtonText>
+      </AddListButton>
     </BodyContainer>
   );
 };
@@ -87,3 +105,28 @@ const BotBar = styled.View`
   bottom: 0px;
 `;
 
+const ButtonText = styled.Text<{ isActive?: boolean }>`
+  display: flex;
+  background-color: ${(props) => (props.isActive ? '#4a90e2' : '#eee')};
+  color: ${(props) => (props.isActive ? '#fff' : '#333')};
+  padding: 10px;
+  margin: 4px;
+  margin-left: 6px;
+  margin-right: 6px;
+  border-radius: 30px;
+  font-weight: bold;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: auto;
+  min-width: 0;
+    flex-shrink: 1;
+    flex-grow: 1;
+`;
+
+const AddListButton = styled.TouchableOpacity<{ isActive?: boolean }>`
+  position: absolute;
+  bottom: 10px;
+  left: calc(50% - 30px);
+`;

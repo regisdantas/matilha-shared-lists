@@ -65,6 +65,7 @@ function reducer(state: State, action: Action): State {
           case 'ADD_LIST':
             {
               const family = draft.families.find(f => f.handle === action.payload.familyHandle);
+              action.payload.list.handle = `list_${nanoid(6)}`;
               if (family) family.lists.push(action.payload.list);
             }
             break;

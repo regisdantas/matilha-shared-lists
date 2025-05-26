@@ -51,7 +51,7 @@ export default function App() {
                 <Stack.Screen name="Matilhas" component={MatilhasScreen} />
               </Stack.Navigator>
             </NavigationContainer>
-            <GlobalStyles /> {/* ⬅ GlobalStyles deve ficar dentro do ThemeProvider */}
+            <GlobalStyles />
           </AppContainer>
         </ThemeProvider>
       </UserProvider>
