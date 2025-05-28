@@ -23,9 +23,20 @@ export const Header = () => {
     navigation.navigate('Login' as never);
   }
 
+  const addFamily = () => {
+    dispatchAction({ type: 'ADD_FAMILY', payload: {
+      handle: "",
+      icon: "👥",
+      name: "",
+      lists: [],
+      membersHandle: [userData.handle],
+    }});
+  }
+
   return(
     <HeaderContainer>
-    <Wolf source={require('../assets/wolf.png')}/>
+    <Wolf source={require('../../assets/wolf.png')}/>
+    <Spinner style={{display: loading?"flex":"none"}}source={require('../../assets/spinner.svg')}/>
       <TopBar>
         <TitleText style={{color: "white"}}>Bem-vindo</TitleText>
       </TopBar>
@@ -39,15 +50,19 @@ export const Header = () => {
                 <FamilyPill key="add" numberOfLines={1} onPress={handleMatilhas}>
                     <PillText>🐾 Matilhas</PillText>
                 </FamilyPill>
-                <FamilyPill key="favoritos" onPress={() => handleMatilhaChange("favoritos")}>
-                    <PillText isActive={userData.selectedFamily==="favoritos"}>⭐ Favoritos</PillText>
+                <FamilyPill key="favorites" onPress={() => handleMatilhaChange("favorites")}>
+                    <PillText isActive={userData.selectedFamily==="favorites"}>⭐ Favoritos</PillText>
                 </FamilyPill>
                 {userData?.families.map((familia) => (
+
                     <FamilyPill key={familia.handle} onPress={() => handleMatilhaChange(familia.handle)}>
-                      <PillText isActive={userData.selectedFamily===familia.handle}>👥 {familia.name}</PillText>
+                      <PillText isActive={userData.selectedFamily===familia.handle}>{familia.icon?familia.icon:"👥"} {(familia.name?familia.name:"Clique para editar")}</PillText>
                     </FamilyPill>
                 ))}
                 </HorizontalScroll>
+                <FamilyPill onPress={addFamily}>
+                <PillText>➕</PillText>
+                </FamilyPill>
                 <FamilyPill onPress={saveToFirebase}>
                 <PillText><FontAwesome name="save" size={24} color="black" /></PillText>
                 </FamilyPill>
@@ -173,3 +188,14 @@ const TitleText = styled.Text`
   font-weight: bolder;
   justify-content: center;
 `;
+
+const Spinner = styled.Image`
+  position: fixed;
+  flex: 1;
+  top: 86px;
+  left: calc(50% - 50px);
+  z-index: 20;
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0);
+`

@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 import { useUser } from '../context/UserContext';
 
 export const ListItem = ({list, item}) => {
-    const [value, setValue] = React.useState('Click to edit me');
+    const [value, setValue] = React.useState(item.text);
     const [isEditing, setIsEditing] = React.useState(item.initialEditing?item.initialEditing:false);
     const {  dispatchAction } = useUser();
     const toggleChecked = () => {
@@ -47,7 +47,7 @@ export const ListItem = ({list, item}) => {
                     />
                 ) : (
                     <ListItemClicable onPress={startEditing}>
-                        <Text style={{textDecorationLine: item.checked ? 'line-through' : 'none'}}>{item.text}</Text>
+                        <Text style={{textDecorationLine: item.checked ? 'line-through' : 'none'}}>{item.text!==""?item.text:"Clique para editar"}</Text>
                     </ListItemClicable>
                 )}
             </Text>

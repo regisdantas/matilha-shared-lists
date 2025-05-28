@@ -31,7 +31,7 @@ export default function App() {
 
   React.useEffect(() => {
     Font.loadAsync({
-      'werewolf': require('./assets/fonts/werewolf.ttf'),
+      'werewolf': require('../assets/fonts/werewolf.ttf'),
     }).then(() => setFontsLoaded(true));
   }, []);
 

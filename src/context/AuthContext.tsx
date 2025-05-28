@@ -1,93 +1,54 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import * as Google from 'expo-auth-session/providers/google';
-import * as Facebook from 'expo-auth-session/providers/facebook';
-import * as WebBrowser from 'expo-web-browser';
-import { 
-  GoogleAuthProvider, 
-  FacebookAuthProvider, 
-  signInWithCredential, 
-  signOut, 
-  onAuthStateChanged, 
-  User 
-} from 'firebase/auth';
-import { auth } from '../services/firebase';
-
-WebBrowser.maybeCompleteAuthSession();
+import {useContext, createContext, useEffect, useState} from 'react';
+import {GoogleAuthProvider,
+        FacebookAuthProvider,
+        signInWithPopup,
+        signOut,
+        onAuthStateChanged,
+        User} from 'firebase/auth';
+import {auth} from '../services/firebase';
 
 interface IAuthContext {
-  user: User | null;
+  user: User;
   signInWithGoogle: () => Promise<void>;
   signInWithFacebook: () => Promise<void>;
   logOut: () => Promise<void>;
+
 }
 
-const AuthContext = createContext<IAuthContext>({} as IAuthContext);
+const AuthContext = createContext({} as IAuthContext);
 
-interface IAuthProviderProps {
-  children: React.ReactNode;
+interface IAuthProps {
+  children: JSX.Element;
 }
 
-export const AuthContextProvider = ({ children }: IAuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
+export const AuthContextProvider: React.FC<IAuthProps> = ({ children }: IAuthProps): JSX.Element => {
+  const [user, setUser] = useState<User>({} as User);
 
-  // Google Auth Request
-  const [googleRequest, googleResponse, promptGoogleAsync] = Google.useIdTokenAuthRequest({
-    clientId: '<SEU_CLIENT_ID_GOOGLE>', // Ex: web client ID do Google Cloud Console
-  });
+  const signInWithGoogle = async (): Promise<void> => {
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
+  };
 
-  // Facebook Auth Request
-  const [fbRequest, fbResponse, promptFbAsync] = Facebook.useAuthRequest({
-    clientId: '<SEU_APP_ID_FACEBOOK>',
-    // Optionais:
-    // scopes: ['email', 'public_profile'],
-  });
-
-  // Monitorar resposta do Google
-  useEffect(() => {
-    if (googleResponse?.type === 'success') {
-      const { id_token } = googleResponse.params;
-      if (id_token) {
-        const credential = GoogleAuthProvider.credential(id_token);
-        signInWithCredential(auth, credential).catch(console.error);
-      }
+  const signInWithFacebook = async (): Promise<void> => {
+    const provider = new FacebookAuthProvider();
+    try {
+      const res = await signInWithPopup(auth, provider);
+    } catch (err) {
+      console.log(err);
     }
-  }, [googleResponse]);
+  };
 
-  // Monitorar resposta do Facebook
-  useEffect(() => {
-    if (fbResponse?.type === 'success') {
-      const { access_token } = fbResponse.params;
-      if (access_token) {
-        const credential = FacebookAuthProvider.credential(access_token);
-        signInWithCredential(auth, credential).catch(console.error);
-      }
-    }
-  }, [fbResponse]);
+  const logOut = async (): Promise<void> => {
+    await signOut(auth);
+  };
 
-  // Observa estado do usuário logado
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+      setUser(currentUser as User);
     });
+
     return () => unsubscribe();
   }, []);
-
-  // Funções públicas do contexto
-  const signInWithGoogle = async () => {
-    await promptGoogleAsync();
-  };
-
-  const signInWithFacebook = async () => {
-    await promptFbAsync();
-  };
-
-  const logOut = async () => {
-    try {
-      await signOut(auth);
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
-  };
 
   return (
     <AuthContext.Provider value={{ user, signInWithGoogle, signInWithFacebook, logOut }}>

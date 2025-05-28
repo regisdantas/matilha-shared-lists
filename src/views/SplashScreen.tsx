@@ -30,8 +30,7 @@ export const SplashScreen = () => {
   return (
     <Container>
       <AnimatedLogo style={{ opacity }}>
-        <Wolf source={require('../assets/wolf.png')}/>
-        <Title>Matilha</Title>
+        <Wolf source={require('../../assets/wolf.png')}/>
       </AnimatedLogo>
     </Container>
   );

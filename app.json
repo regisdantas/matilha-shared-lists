@@ -4,11 +4,11 @@
     "slug": "matilha",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/icon.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./src/assets/matilha.png",
+      "image": "./assets/matilha.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -19,15 +19,21 @@
     "android": {
       "jsEngine": "jsc", 
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/matilha.png",
+        "foregroundImage": "./assets/matilha.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true
     },
     "web": {
-      "favicon": "./src/assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "static",
+      "build": {
+        "assetPrefix": "./"
+      }
     },
     "plugins": [
+      "expo-router",
       "expo-web-browser",
       "expo-secure-store",
       "expo-font"

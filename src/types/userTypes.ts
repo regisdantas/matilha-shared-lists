@@ -5,6 +5,7 @@ export type Item = {
     text: string;
     checked: boolean;
     addedBy: string;
+    initialEditing: boolean;
 }
 
 export type List = {
@@ -15,11 +16,13 @@ export type List = {
     familyHandle: string;
     items: Item[];
     ownerHandle: string;
+    initialEditing: boolean;
 }
 
 export type Family = {
     handle: string;
     name: string;
+    icon: string;
     membersHandle: string[];
     lists: List[];
 }

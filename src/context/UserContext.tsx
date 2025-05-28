@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect, useState } from 'react';
 import { produce } from 'immer';
-import { doc, getDoc, setDoc, getDocs, collection } from 'firebase/firestore';
+import { doc, getDoc, setDoc, addDoc, getDocs, updateDoc, collection } from 'firebase/firestore';
 import { database } from '../services/firebase';
 import { useAuth } from './AuthContext';
 import { UserData, Action, Family, List, Item  } from '../types/userTypes';
@@ -21,7 +21,7 @@ const initialUserData: UserData = {
   phone: '',
   email: '',
   families: [],
-  selectedFamily: "laradantas"
+  selectedFamily: "favorites"
 };
 
 const initialState: State = {
@@ -51,6 +51,7 @@ function reducer(state: State, action: Action): State {
       const newUserData = produce(state.userData, draft => {
         switch (action.type) {
           case 'ADD_FAMILY':
+            action.payload.handle = `family_${nanoid(6)}`;
             draft.families.push(action.payload);
             break;
           case 'REMOVE_FAMILY':
@@ -223,10 +224,31 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 id: docSnap.id,
                 handle: data.handle ?? '',
                 name: data.name ?? '',
+                icon: data.icon ?? '',
                 membersHandle: data.membersHandle,
                 lists: await fetchLists(docSnap.id, data.handle),
             });
             }
+        }
+        if (userFamilies.some(family => family.handle === userHandle) === false) {
+          const familyId = doc(collection(database, 'families')).id;
+          const familyRef = doc(database, 'families', familyId);
+          const personalFamily = {
+            id: familyId,
+            handle: userHandle,
+            name: "Pessoal",
+            icon: "🐺",
+            membersHandle: [userHandle],
+            lists: []
+          } as Family;
+          userFamilies.unshift(personalFamily);
+          await setDoc(familyRef, personalFamily, { merge: true });
+        } else {
+          userFamilies.sort((a, b) => {
+            if (a.handle === userHandle) return -1;
+            if (b.handle === userHandle) return 1;
+            return 0;
+          });
         }
         return userFamilies;
     }
@@ -245,7 +267,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             phone: data?.phone ?? '',
             email: data?.['e-mail'] ?? '',
             families: await fetchUserFamilies(data?.handle) ?? [],
-            selectedFamily: "favoritos"
+            selectedFamily: "favorites"
           };
           dispatch({ type: 'LOAD_USER_DATA', payload: loadedUserData });
         } else {
@@ -283,7 +305,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
           'e-mail': state.userData.email,
           families: state.userData.families.map((family) => family.handle),
         });
-          console.log('Famílias salvas com sucesso.');
         } catch (error) {
           console.error('Erro ao salvar famílias:', error);
         }
@@ -292,45 +313,62 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       const saveFamilies = async (families: Family[]) => {
         try {
           for (const family of families) {
-            const familyRef = doc(database, 'families', family.id);
-
-            // Salva a família com os membros
+            const familyId = family.id || doc(collection(database, 'families')).id;
+            const familyRef = doc(database, 'families', familyId);
+            
             await setDoc(familyRef, {
               handle: family.handle,
               name: family.name,
+              icon: family.icon,
               membersHandle: family.membersHandle,
-            });
+            }, { merge: true });
 
-            for (const list of family.lists) {
-              const listRef = doc(database, `families/${family.id}/lists`, list.id);
+            if (family.lists) {
+              for (const list of family.lists) {
+                const listId = list.id || doc(collection(database, 'lists')).id;
+                const listRef = doc(database, `families/${familyId}/lists`, listId);
+                
+                await setDoc(listRef, {
+                  handle: list.handle,
+                  name: list.name,
+                  icon: list.icon,
+                  favorite: list.favorite,
+                  familyHandle: family.handle,
+                  ownerHandle: list.ownerHandle,
+                }, { merge: true });
 
-              // Salva a lista (sem os itens ainda)
-              await setDoc(listRef, {
-                handle: list.handle,
-                name: list.name,
-                icon: list.icon,
-                favorite: list.favorite,
-                familyHandle: family.handle,
-                ownerHandle: list.ownerHandle,
-              });
-
-              for (const item of list.items) {
-                const itemRef = doc(database, `families/${family.id}/lists/${list.id}/items`, item.id);
-
-                // Salva cada item individualmente
-                await setDoc(itemRef, {
-                  handle: item.handle,
-                  icon: item.icon,
-                  text: item.text,
-                  checked: item.checked,
-                  addedBy: item.addedBy,
-                });
+                if (list.items) {
+                  for (const item of list.items) {
+                    const itemCollectionRef = collection(database, `families/${familyId}/lists/${listId}/items`);
+                    
+                    if (item.id) {
+                      const itemRef = doc(database, `families/${familyId}/lists/${listId}/items`, item.id);
+                      await setDoc(itemRef, {
+                        handle: item.handle,
+                        icon: item.icon,
+                        text: item.text,
+                        checked: item.checked,
+                        addedBy: item.addedBy,
+                      }, { merge: true });
+                    } else {
+                      const newDocRef = await addDoc(itemCollectionRef, {
+                        handle: item.handle,
+                        icon: item.icon,
+                        text: item.text,
+                        checked: item.checked,
+                        addedBy: item.addedBy,
+                      });
+                      item.id = newDocRef.id;
+                    }
+                  }
+                }
               }
             }
           }
-          console.log('Famílias salvas com sucesso.');
+          return { success: true };
         } catch (error) {
           console.error('Erro ao salvar famílias:', error);
+          return { success: false, error };
         }
       };
 

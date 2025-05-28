@@ -59,7 +59,7 @@ export const LoginScreen = () => {
           <LoginText>Entre com Facebook</LoginText>
         </LoginButton>
       </LoginForm>
-      <Matilha source={require('../assets/matilha.png')}/>
+      <Matilha source={require('../../assets/matilha.png')}/>
       <BotBar/>
     </BodyContainer>
   );

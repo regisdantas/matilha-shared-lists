@@ -9,24 +9,6 @@ export const MatilhasScreen = () => {
   const opacity = new Animated.Value(0);
   const navigation = useNavigation();
 
-  useEffect(() => {
-    Animated.timing(opacity, {
-      toValue: 1,
-      duration: 1000,
-      useNativeDriver: true,
-    }).start(() => {
-      setTimeout(() => {
-        navigation.navigate('Login' as never);
-      }, 1000);
-    });
-  }, []);
-
-  React.useEffect(() => {
-    if (user !== null && user.displayName !== undefined) {
-      navigation.navigate('Dashboard' as never);
-    }
-  }, [user]);
-
   return (
     <Container>
       <AnimatedLogo style={{ opacity }}>

@@ -11,8 +11,7 @@ export const DashboardScreen = () => {
   const getLists = () => {
     let lists = [];
     userData?.families?.map((family) => {
-        console.log(userData.selectedFamily, family.handle)
-        if (userData.selectedFamily === "favoritos") {
+        if (userData.selectedFamily === "favorites") {
           family.lists?.map(list => list.favorite?lists.push(list):"")
         } else if (userData.selectedFamily === family.handle){
           lists = lists.concat(family.lists)
@@ -22,15 +21,22 @@ export const DashboardScreen = () => {
   }
 
   const addList = () => {
+    let familyToAdd = userData.selectedFamily;
+    if (userData.selectedFamily === "favorites"){
+      dispatchAction({ type: 'SELECT_FAMILY', payload: { familyHandle: userData.handle}});
+      familyToAdd = userData.handle;
+    }
+
     dispatchAction(
-      { type: 'ADD_LIST', payload: { familyHandle: userData.selectedFamily, list: {
+      { type: 'ADD_LIST', payload: { familyHandle: familyToAdd, list: {
         handle: "",
         icon: "",
-        name: "Click to edit",
+        name: "",
         favorite: false,
-        familyHandle: userData.selectedFamily,
+        familyHandle: familyToAdd,
         items: [],
         ownerHandle: userData.handle,
+        initialEditing: true
       } } }
     )
   }
@@ -39,14 +45,14 @@ export const DashboardScreen = () => {
     <BodyContainer>
       <Header />
       <ListScroll showsVerticalScrollIndicator={false}>
-        <UserName>{user.displayName}</UserName>
+        <UserName>{(loading?" ":user.displayName)}</UserName>
         <GridWrapper>
           {getLists().map((lista, li) => (
             <ListCard key={li} list={lista}></ListCard>
           ))}
         </GridWrapper>
       </ListScroll>
-      <Matilha source={require('../assets/matilha.png')} />
+      <Matilha source={require('../../assets/matilha.png')} />
       <BotBar />
       <AddListButton onPress={addList}>
         <ButtonText>➕</ButtonText>
@@ -79,9 +85,9 @@ const ListScroll = styled.ScrollView`
 `;
 
 const GridWrapper = styled.View`
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 16px;
 `;
 
 const Matilha = styled.Image`
