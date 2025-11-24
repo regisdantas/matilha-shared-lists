@@ -61,8 +61,7 @@ export default function App() {
 
 export const AppContainer = styled.View`
   min-height: ${screenHeight * 0.9}px;
-  width: 900px;
-  max-width: 900px;
+  width: 100%;
   flex: 1;
   flex-direction: column;
   justify-content: center;

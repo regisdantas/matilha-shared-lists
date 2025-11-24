@@ -1,6 +1,6 @@
 # matilha-shared-lists
 
-Family list-organizer web app built with REST, React, and TypeScript. Create a “pack” family group to share tasks, shopping lists, and reminders in real time. Members can view, edit, and sync lists across the browser, or keep personal lists individually.
+Family list-organizer web app built with Expo, React Native, and TypeScript. Create a family group to share tasks, shopping lists, and reminders in real time. Members can view, edit, and sync lists across the browser, or keep personal lists individually.
 
 ---
 

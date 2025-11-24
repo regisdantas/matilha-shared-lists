@@ -74,7 +74,7 @@ const UserName = styled.Text`
   font-family: impact;
   letter-spacing: 10px;
   text-transform: uppercase;
-  height: 100px;
+  height: 70px;
   line-height: 50px;
 `;
 

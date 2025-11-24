@@ -38,7 +38,7 @@ export const Header = () => {
     <Wolf source={require('../../assets/wolf.png')}/>
     <Spinner style={{display: loading?"flex":"none"}}source={require('../../assets/spinner.svg')}/>
       <TopBar>
-        <TitleText style={{color: "white"}}>Bem-vindo</TitleText>
+        <TitleText style={{color: "white"}}>Bem-vindo à</TitleText>
       </TopBar>
       <MainHeader>
         <TitleAppName>Matilha</TitleAppName>
@@ -47,9 +47,6 @@ export const Header = () => {
         {(user !== null && user.displayName !== undefined)?( 
             <>
                 <HorizontalScroll horizontal showsHorizontalScrollIndicator={false}>
-                <FamilyPill key="add" numberOfLines={1} onPress={handleMatilhas}>
-                    <PillText>🐾 Matilhas</PillText>
-                </FamilyPill>
                 <FamilyPill key="favorites" onPress={() => handleMatilhaChange("favorites")}>
                     <PillText isActive={userData.selectedFamily==="favorites"}>⭐ Favoritos</PillText>
                 </FamilyPill>
